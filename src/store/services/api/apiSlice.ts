@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import Cookies from "js-cookie";
 
 export const apiSlice = createApi({
   reducerPath: "pencilApi",
@@ -7,8 +8,10 @@ export const apiSlice = createApi({
     prepareHeaders: (headers) => {
       headers.set("Content-Type", "application/json");
       headers.set("Accept", "application/json");
-      headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`);
-      headers.set("Access-Control-Allow-Origin", "*");
+      const token = Cookies.get("pencil_DB_Token");
+      if(token){
+        headers.set("Authorization", `Bearer ${token}`);
+      }
       return headers;
     },
   }),

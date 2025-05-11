@@ -9,11 +9,16 @@ const productsApi = apiSlice.injectEndpoints({
     }),
 
     addProduct: builder.mutation({
-      query: (data) => ({
-        url: "/product/product/",
-        method: "POST",
-        body: data,
-      }),
+      query: (formData) => {
+        console.log(formData);
+
+        return {
+          url: "/product/product/",
+          method: "POST",
+          body: formData,
+        };
+      },
+
       invalidatesTags: ["products"],
     }),
   }),

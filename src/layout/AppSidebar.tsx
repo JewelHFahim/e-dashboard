@@ -55,7 +55,7 @@ const othersItems: NavItem[] = [
     ,
     name: "Settings",
     subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
+      { name: "Login", path: "/login", pro: false },
       { name: "Sign Up", path: "/signup", pro: false },
     ],
   },

@@ -20,7 +20,8 @@ import Home from "./pages/Dashboard/Home";
 import Orders from "./pages/Orders";
 import Products from "./pages/Products";
 import Categories from "./pages/Categories";
-import { Toaster } from "./../node_modules/react-hot-toast/src/components/toaster";
+import { Toaster } from "react-hot-toast";
+import RequireAuth from "./utils/RequireAuth";
 
 export default function App() {
   return (
@@ -29,7 +30,13 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
+          <Route
+            element={
+              <RequireAuth>
+                <AppLayout />
+              </RequireAuth>
+            }
+          >
             <Route index path="/" element={<Home />} />
 
             {/* Others Page */}
@@ -59,14 +66,13 @@ export default function App() {
           </Route>
 
           {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-
       <Toaster />
     </>
   );
