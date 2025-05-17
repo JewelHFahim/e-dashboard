@@ -20,14 +20,16 @@ import Home from "./pages/Dashboard/Home";
 import Orders from "./pages/Orders";
 import Products from "./pages/Products";
 import Categories from "./pages/Categories";
-import { Toaster } from "react-hot-toast";
 import RequireAuth from "./utils/RequireAuth";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   return (
     <>
       <Router>
+        <Toaster />
         <ScrollToTop />
+
         <Routes>
           {/* Dashboard Layout */}
           <Route
@@ -73,7 +75,6 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-      <Toaster />
     </>
   );
 }

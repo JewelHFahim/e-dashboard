@@ -1,4 +1,7 @@
-import { useProductsQuery } from "../store/services/products/productsApi";
+import {
+  useDeleteProductMutation,
+  useProductsQuery,
+} from "../store/services/products/productsApi";
 import Badge from "../components/ui/badge/Badge";
 import { FaRegEdit } from "react-icons/fa";
 import { GoTrash } from "react-icons/go";
@@ -12,17 +15,33 @@ import {
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { useState } from "react";
 import AddProduct from "../components/modals/AddProduct";
+import toast from "react-hot-toast";
 
 export default function Products() {
   const { data: products, isLoading } = useProductsQuery();
   const [addModal, setAddModal] = useState<boolean>(false);
+  const [deleteProduct] = useDeleteProductMutation();
+
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await deleteProduct(id);
+      console.log(res);
+      toast.success("Product delted");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete this product");
+    }
+  };
 
   if (isLoading) {
     return <p>Loading....</p>;
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 sm:px-6 relative">
+    <div className="overflow-hidde n rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 sm:px-6 relative">
+     
+      
+
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
@@ -137,7 +156,7 @@ export default function Products() {
                   <button>
                     <FaRegEdit />
                   </button>
-                  <button>
+                  <button onClick={() => handleDelete(product.id)}>
                     <GoTrash />
                   </button>
                 </TableCell>
@@ -147,7 +166,7 @@ export default function Products() {
         </Table>
       </div>
 
-      {addModal && <AddProduct addModal={addModal} setAddModal={setAddModal}/>}
+      {addModal && <AddProduct addModal={addModal} setAddModal={setAddModal} />}
     </div>
   );
 }

@@ -6,7 +6,6 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.pencilwoodbd.org",
     prepareHeaders: (headers) => {
-      headers.set("Content-Type", "application/json");
       headers.set("Accept", "application/json");
       const token = Cookies.get("pencil_DB_Token");
       if(token){
