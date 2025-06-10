@@ -1,10 +1,9 @@
 import Label from "../form/Label";
-import toast from "./../../../node_modules/react-hot-toast/src/index";
 import { useAddProductMutation } from "../../store/services/products/productsApi";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import FileInput from "../form/input/FileInput";
-import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 type ProductFormData = {
   name: string;
@@ -55,7 +54,6 @@ const AddProduct: React.FC<AddProductProps> = ({ addModal, setAddModal }) => {
       return newImages;
     });
   };
-  const notify = () => toast.success("Here is your toast.");
 
   const onSubmit = async (data: ProductFormData) => {
     const formData = new FormData();
@@ -73,14 +71,7 @@ const AddProduct: React.FC<AddProductProps> = ({ addModal, setAddModal }) => {
 
     try {
       const res = await addProduct(formData).unwrap();
-      toast.success("Hellow");
-
-      console.log(res);
-      console.log(res?.message);
-      console.log(res?.status);
-
       if (res?.status) {
-        notify();
         setAddModal(false);
         toast.success(res?.message);
       } else {
@@ -98,7 +89,6 @@ const AddProduct: React.FC<AddProductProps> = ({ addModal, setAddModal }) => {
 
   return (
     <div className="absolute left-1/2 top-0  -translate-x-1/2 w-full h-full  bg-black/30 rounded-xl sm:p-5">
-      <Toaster />
       <div className="sm:w-[65%] h-max mx-auto bg-white rounded-xl p-4 sm:p-8">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
@@ -126,7 +116,7 @@ const AddProduct: React.FC<AddProductProps> = ({ addModal, setAddModal }) => {
 
             <div>
               <Label>
-                Product Title <span className="text-error-500">*</span>
+                Category <span className="text-error-500">*</span>
               </Label>
               <select
                 {...register("category", { required: true })}

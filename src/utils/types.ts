@@ -19,3 +19,24 @@ export interface ProductsResponse {
   previous: string;
   data: Product[];
 }
+
+// Category interface
+export interface Category {
+  id: number;
+  title: string;
+  slug: string;
+  image: string;
+  details: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+export interface CategoriesResponse {
+  status: boolean;
+  count: number;
+  next: string | null;
+  previous: string | null;
+  data: Category[];
+}

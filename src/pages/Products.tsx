@@ -40,8 +40,6 @@ export default function Products() {
   return (
     <div className="overflow-hidde n rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 sm:px-6 relative">
      
-      
-
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
