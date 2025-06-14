@@ -58,10 +58,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, setIsOpen, mode, 
     try {
       const response = mode === "add"
           ? await addCategory(formData).unwrap()
-          : await updateCategory({
-              id: selectedCategory.id,
-              data: formData,
-            }).unwrap();
+          : await updateCategory({ id: selectedCategory.id, data: formData }).unwrap();
 
       if (response?.status) {
         toast.success(response.message);

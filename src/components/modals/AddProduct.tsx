@@ -26,11 +26,7 @@ interface AddProductProps {
 }
 
 const AddProduct: React.FC<AddProductProps> = ({ addModal, setAddModal }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ProductFormData>();
+  const { register, handleSubmit, formState: { errors } } = useForm<ProductFormData>();
   const [addProduct, { isLoading }] = useAddProductMutation();
   const [images, setImages] = useState<FileWithPreview[]>([]);
 

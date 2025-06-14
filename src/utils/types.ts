@@ -1,12 +1,12 @@
 export interface Product {
-  id: 14;
-  category: 4;
+  id: number;
+  category: number;
   stock: number;
   slug: string;
   name: string;
   details: string;
-  discount_price: string;
-  current_price: string;
+  discount_price: number;
+  current_price: number;
   created_at: string;
   product_image: [{ id: string; image: string }];
   short_description: string;

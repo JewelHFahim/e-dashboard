@@ -16,6 +16,7 @@ import { MdFormatListBulletedAdd } from "react-icons/md";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import CategoryModal from "../components/modals/CategoryModal";
+import Loader from "../utils/loader/Loader";
 
 type Category = {
   id: number;
@@ -39,7 +40,7 @@ const Categories = () => {
   const [deleteCategory] = useDeleteCategoryMutation();
 
   if (isLoading) {
-    return <p>Loading....</p>;
+    return <div className="w-fll min-h-[60vh] flex justify-center items-center"> <Loader/> </div> ;
   }
 
   const handleDelete = async (id: number) => {

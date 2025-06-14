@@ -1,7 +1,4 @@
-import {
-  useDeleteProductMutation,
-  useProductsQuery,
-} from "../store/services/products/productsApi";
+import { useDeleteProductMutation, useProductsQuery } from "../store/services/products/productsApi";
 import Badge from "../components/ui/badge/Badge";
 import { FaRegEdit } from "react-icons/fa";
 import { GoTrash } from "react-icons/go";
@@ -14,13 +11,38 @@ import {
 } from "../components/ui/table";
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { useState } from "react";
-import AddProduct from "../components/modals/AddProduct";
 import toast from "react-hot-toast";
+import ProductModal from "../components/modals/ProductModal";
+import Loader from "../utils/loader/Loader";
+
+
+type Product = {
+    id: number;
+    name: string;
+    category: number;
+    short_description: string;
+    details: string;
+    current_price: number;
+    discount_price: number;
+    product_image: { image: string }[];
+}
 
 export default function Products() {
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<string>("add");
   const { data: products, isLoading } = useProductsQuery();
-  const [addModal, setAddModal] = useState<boolean>(false);
+  console.log(products)
   const [deleteProduct] = useDeleteProductMutation();
+  const [selectedProduct, setSelectedProduct] = useState<Product>({
+    id: 0,
+    name: "",
+    category: 0,
+    short_description: "",
+    details: "",
+    current_price: 0,
+    discount_price: 0,
+    product_image:  [{ image: "" }],
+  });
 
   const handleDelete = async (id: number) => {
     try {
@@ -34,12 +56,11 @@ export default function Products() {
   };
 
   if (isLoading) {
-    return <p>Loading....</p>;
+    return <div className="w-fll min-h-[60vh] flex justify-center items-center"> <Loader/> </div> ;
   }
 
   return (
-    <div className="overflow-hidde n rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 sm:px-6 relative">
-     
+    <div className="overflow-hidde n rounded-2xl border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-500 px-4 pb-3 pt-4 sm:px-6 relative">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
@@ -48,8 +69,11 @@ export default function Products() {
         </div>
 
         <button
-          onClick={() => setAddModal(!addModal)}
-          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800"
+          onClick={() => { setShowModal(!showModal); setEditMode("add")} }
+          // onClick={() => setAddModal(!addModal)}
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:bg-gray-800 dark:hover:text-white"
+          type="button"
+          aria-label="Add Product"
         >
           <MdFormatListBulletedAdd className="text-xl" />
           Add Product
@@ -151,7 +175,7 @@ export default function Products() {
                 </TableCell>
 
                 <TableCell className="py-3  flex items-center gap-3 text-lg text-gray-500 text- theme-sm dark:text-gray-400">
-                  <button>
+                  <button onClick={() => {setSelectedProduct(product); setShowModal(true); setEditMode("edit")}}>
                     <FaRegEdit />
                   </button>
                   <button onClick={() => handleDelete(product.id)}>
@@ -164,7 +188,15 @@ export default function Products() {
         </Table>
       </div>
 
-      {addModal && <AddProduct addModal={addModal} setAddModal={setAddModal} />}
+      {/* {addModal && <AddProduct addModal={addModal} setAddModal={setAddModal} />} */}
+      {showModal && (
+        <ProductModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+          mode = { editMode === "edit" ? "edit" : "add"}
+          selectedProduct={selectedProduct}
+        />
+      )}
     </div>
   );
 }
