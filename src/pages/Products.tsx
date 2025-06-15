@@ -14,34 +14,38 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import ProductModal from "../components/modals/ProductModal";
 import Loader from "../utils/loader/Loader";
+import { Product } from "../utils/types";
 
 
-type Product = {
-    id: number;
-    name: string;
-    category: number;
-    short_description: string;
-    details: string;
-    current_price: number;
-    discount_price: number;
-    product_image: { image: string }[];
-}
+// type Product = {
+//     id: number;
+//     name: string;
+//     category: number;
+//     short_description: string;
+//     details: string;
+//     current_price: number;
+//     discount_price: number;
+//     product_image: { image: string }[];
+// }
 
 export default function Products() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<string>("add");
   const { data: products, isLoading } = useProductsQuery();
-  console.log(products)
   const [deleteProduct] = useDeleteProductMutation();
   const [selectedProduct, setSelectedProduct] = useState<Product>({
     id: 0,
     name: "",
     category: 0,
     short_description: "",
+    stock: 0,
+    slug: "",
+    created_at: "",
     details: "",
     current_price: 0,
     discount_price: 0,
-    product_image:  [{ image: "" }],
+    // product_image:  [{ image: "" }],
+    product_image: [{ id: 0, image: "" }]
   });
 
   const handleDelete = async (id: number) => {

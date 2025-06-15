@@ -9,6 +9,11 @@ const productsApi = apiSlice.injectEndpoints({
       providesTags: ["products"],
     }),
 
+    productDetails: builder.query<Product, {id: number}>({
+      query: ({id}) => `/product/product/${id}/`,
+      providesTags: ["products"],
+    }),
+
     addProduct: builder.mutation({
       query: (formData) => ({
         url: "/product/product/",
@@ -39,6 +44,7 @@ const productsApi = apiSlice.injectEndpoints({
 
 export const {
   useProductsQuery,
+  useProductDetailsQuery,
   useAddProductMutation,
   useDeleteProductMutation,
   useUpdateProductMutation

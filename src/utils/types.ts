@@ -8,7 +8,7 @@ export interface Product {
   discount_price: number;
   current_price: number;
   created_at: string;
-  product_image: [{ id: string; image: string }];
+  product_image: [{ id: number; image: string }];
   short_description: string;
 }
 

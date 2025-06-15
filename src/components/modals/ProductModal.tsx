@@ -1,22 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Label from "../form/Label";
 import {
   useAddProductMutation,
+  useProductDetailsQuery,
   useUpdateProductMutation,
 } from "../../store/services/products/productsApi";
 import toast from "react-hot-toast";
+import { Product } from "../../utils/types";
+import Loader from "../../utils/loader/Loader";
 
-type Product = {
-  id: number;
-  name: string;
-  category: number;
-  short_description: string;
-  details: string;
-  current_price: number;
-  discount_price: number;
-  product_image: { image: string }[];
-};
+// type Product = {
+//   id: number;
+//   name: string;
+//   category: number;
+//   short_description: string;
+//   details: string;
+//   current_price: number;
+//   discount_price: number;
+//   product_image: { image: string }[];
+// };
 
 interface ProductModalProps {
   showModal: boolean;
@@ -24,6 +27,12 @@ interface ProductModalProps {
   selectedProduct?: Product;
   mode: "add" | "edit";
 }
+
+type FileWithPreview = {
+  file: File;
+  preview: string;
+};
+
 
 type ProductFormData = {
   name: string;
@@ -39,6 +48,61 @@ const ProductModal: React.FC<ProductModalProps> = ({ showModal, setShowModal, mo
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProductFormData>();
   const [addProduct, { isLoading: isAdding }] = useAddProductMutation();
   const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
+  console.log(selectedProduct);
+  const id = selectedProduct?.id || 0;
+  console.log(id)
+  const { data: details, isLoading: isDetailsLoading } = useProductDetailsQuery({id});
+  const [images, setImages] = useState<FileWithPreview[]>([]);
+
+  console.log(details)
+
+    
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileList = Array.from(files).map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setImages((prev) => [...prev, ...fileList]);
+  };
+
+
+  useEffect(() => {
+    if (mode === "edit" && selectedProduct) {
+      reset({
+        name: selectedProduct.name || "",
+        category: selectedProduct.category || 0,
+        short_description: selectedProduct.short_description || "",
+        details: selectedProduct.details || "",
+        current_price: selectedProduct.current_price || 0,
+        discount_price: selectedProduct.discount_price || 0,
+      });
+      setImages(selectedProduct.product_image.map(img => ({ file: new File([], img.image), preview: img.image })));
+    } else if (mode === "add") {
+      reset({
+        name: "",
+        category: 0,
+        short_description: "",
+        details: "",
+        current_price: 0,
+        discount_price: 0,
+      });
+      setImages([]);
+    }
+  
+  }, [mode, selectedProduct, reset]);
+
+    const handleRemoveImage = (index: number) => {
+    setImages((prev) => {
+      const newImages = [...prev];
+      URL.revokeObjectURL(newImages[index].preview);
+      newImages.splice(index, 1);
+      return newImages;
+    });
+  };
 
 
     const onSubmit = async (data: ProductFormData) => {
@@ -50,14 +114,22 @@ const ProductModal: React.FC<ProductModalProps> = ({ showModal, setShowModal, mo
       formData.append("current_price", String(data.current_price));
       formData.append("discount_price", String(data.discount_price));
   
-      // if (data.image && data.image[0]) {
-      //   formData.append("image", data.image[0]);
-      // }
+      images.forEach((img) => {
+      formData.append("product_image", img.file);
+    });
+
+      if (mode === "edit" && selectedProduct) {
+        formData.append("id", String(selectedProduct.id));
+      }
+
+      console.log({data, ...images})
   
       try {
         const response = mode === "add"
             ? await addProduct(formData).unwrap()
             : await updateProduct({ id: selectedProduct?.id || 0, formData }).unwrap();
+
+            console.log(response)
   
         if (response?.status) {
           toast.success(response.message);
@@ -74,6 +146,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ showModal, setShowModal, mo
   
     if (!showModal) return null;
 
+  if (isDetailsLoading) {
+    return <div className="w-fll min-h-[60vh] flex justify-center items-center"> <Loader/> </div> ;
+  }
 
 
   return (
@@ -183,21 +258,20 @@ const ProductModal: React.FC<ProductModalProps> = ({ showModal, setShowModal, mo
 
             {/* Image upload */}
             <div>
-              {/* <Label>Upload file</Label>
-              <FileInput onChange={handleFileChange} className="custom-class" /> */}
               <div>
                 <Label htmlFor="image">Image</Label>
                 <input
                   type="file"
                   id="image"
                   accept="image/*"
-                  {...register("product_image")}
+                  onChange={handleFileChange}
+                  multiple
                   className="w-full border border-gray-300 dark:border-gray-500 rounded-md px-3 py-2 text-sm"
                 />
               </div>
             </div>
 
-            {/* <div className="flex flex-wrap gap-4 mt-2">
+            <div className="flex flex-wrap gap-4 mt-2">
               {images?.map((img, idx) => (
                 <div key={idx} className="relative group">
                   <img
@@ -214,7 +288,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ showModal, setShowModal, mo
                   </button>
                 </div>
               ))}
-            </div> */}
+            </div>
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-4">
